@@ -57,7 +57,7 @@ class Convert():
 					if char in self.dict_accent_to_id:
 						tmp1.append(self.dict_char_to_id[self.dict_accent_to_id[char]])	
 					else:	
-						tmp1.append(68)
+						tmp1.append(28)
 				if char in self.dict_accent_to_id:
 					tmp2.append(self.dict_accent_to_id[char])
 				else:

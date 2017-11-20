@@ -14,23 +14,23 @@ function Model:_init()
 end
 
 function Model:build_brnn()
-    local dict_size = 27 ---26 chữ cái và dấu cách
-    local ndim = 512
-    local batch_size = 10
-    local seq_len = 10
+    local dict_size = 28 ---26 chữ cái, dấu cách và dấu '<' (>)
+    local hidden_size = 512
+    local batch_size = 10 -- số lượng câu trong mỗi input
+    --local seq_len = 10
     local nout = 68 ---68 nhãn
 
-    local lt = nn.LookupTableMaskZero(dict_size, ndim)
-    local brnn = nn.SeqBRNN(seq_len, batch_size, ndim)
+    local lt = nn.LookupTableMaskZero(dict_size, hidden_size)
+    local brnn = nn.SeqBRNN(hidden_size, hidden_size, true)
     local tanh = nn.Tanh()
-    local linear1 = nn.Linear(ndim, ndim)
-    local linear2 = nn.Linear(ndim, nout)
+    local linear1 = nn.Linear(hidden_size, hidden_size)
+    local linear2 = nn.Linear(hidden_size, nout)
     local rnn = nn.Sequential()
     local logsoftmax = nn.LogSoftMax()
 
     rnn:add(lt)
-    --rnn:add(brnn)
-    --rnn:add(tanh)
+    rnn:add(brnn)
+    rnn:add(tanh)
     --rnn:add(linear1)
     --rnn:add(tanh)
     --rnn:add(linear2)
