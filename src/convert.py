@@ -94,10 +94,16 @@ if __name__ == '__main__':
 	#save file input & target
 	inp = open('../output/input.txt', 'w')
 	tar = open('../output/target.txt', 'w')
+	# max_len = 0
 	for i in range(len(data)):
+		# x = (str)(result1[i]).replace('[', '').replace(']', '').replace(', ', ' ')
+		# if len(x.split(' ')) > max_len:
+		# 	max_len = len(x.split(' '))
 		inp.write((str)(result1[i]).replace('[', '').replace(']', '').replace(', ', ' ') + '\n')
 		tar.write((str)(result2[i]).replace('[', '').replace(']', '').replace(', ', ' ') + '\n')
 		print (data[i], '\n' ,result1[i], '\n', result2[i])
 		print ("="*35)
+	# print('max')
+	# print(max_len)
 	inp.close()
 	tar.close()
