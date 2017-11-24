@@ -44,8 +44,6 @@ for i = 1, #data_inp, batch_size do
         end
         local inp = torch.Tensor(max_dim):zero()
         local tar = torch.Tensor(max_dim):zero()
-        --- Khởi tạo giá trị target ban đầu = nout
-        --for m = 1, max_dim do tar[m]  = nout end
 
         local table_index_inp = tknz:split_word_only(data_inp[n])
         local table_index_tar = tknz:split_word_only(data_tar[n])
@@ -61,21 +59,11 @@ for i = 1, #data_inp, batch_size do
     table.insert(table_targets, target)
 end
 
---print(table_targets[1])
-
 --- Training
-local learning_rate = 0.01
-local number_input = 15
+local learning_rate = 0.02
+local number_input = 100
 local criterion = nn.SequencerCriterion(nn.MaskZeroCriterion(nn.ClassNLLCriterion(),1))
---local criterion = (nn.MaskZeroCriterion(nn.ClassNLLCriterion(),1))
 training:train(table_inputs, table_targets, criterion, learning_rate, number_input)
 
 ---Testing
 --testing:test(mlp, table_inputs, table_targets)
-
---local test_in = torch.DoubleTensor({{10, 3 , 4, 5, 0 }, {10, 4, 5, 6, 0}})
---print(test_in)
---print(input)
---local output = mlp:forward(input)
---print('Output_')
---print(output)

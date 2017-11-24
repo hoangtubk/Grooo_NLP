@@ -28,7 +28,6 @@ function Model:build_brnn()
     local rnn = nn.Sequential()
     rnn:add(lt)
     rnn:add(brnn)
-    --rnn:add(self:build_seqbrnn())
     rnn:add(linear)
     rnn:add(logsoftmax)
     return rnn

@@ -21,6 +21,9 @@ end
 
 ---@param table_inputs table
 ---@param table_targets table
+---@param criterion
+---@param learning_rate number
+---@param number_input number @number input sequence sentent
 function Training:train(table_inputs, table_targets, criterion, learning_rate, number_input)
     local mlp = model:build_brnn()
 ---use GPU with cuda
@@ -48,9 +51,10 @@ function Training:train(table_inputs, table_targets, criterion, learning_rate, n
         precision = testing:test(mlp, table_inputs, table_targets, number_input)
         print(string.format("Iteration %d ; Error = %f, Precision = %f ", iteration, sum_err, precision))
         ---Training is finished:
-        if sum_err < 1 then
+        if precision > 0.9 then
             break
         end
     end
+    torch.save('seqbnn.t7', mlp)
     print('Time training:' .. timer:time().real .. ' seconds')
 end
