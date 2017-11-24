@@ -9,7 +9,10 @@ require('cutorch')
 require('cunn')
 class = require('pl.class')
 include('model.lua')
+include('testing.lua')
+
 local model = Model()
+local testing = Testing()
 
 Training = class()
 function Training:_init()
@@ -18,32 +21,36 @@ end
 
 ---@param table_inputs table
 ---@param table_targets table
-function Training:train(table_inputs, table_targets, criterion, learning_rate)
+function Training:train(table_inputs, table_targets, criterion, learning_rate, number_input)
     local mlp = model:build_brnn()
 ---use GPU with cuda
-    --criterion = criterion:cuda()
-    --mlp = mlp:cuda()
-    local  err, sum_err = 0, 0
-    local grad_ouputs = {}
+    criterion = criterion:cuda()
+    mlp = mlp:cuda()
+    local iteration = 0
+    local timer = torch.Timer()
     while true do
-        local  err, sum_err = 0, 0
-        for step = 1, 15 do
+        iteration = iteration +1
+        local  err, sum_err, precision = 0, 0, 0
+        local grad_ouputs = {}
+        for step = 1, number_input do
         ---use GPU with cuda
-            --table_inputs[step] = table_inputs[step]:cuda()
-            --table_targets[step] = table_targets[step]:cuda()
+            table_inputs[step] = table_inputs[step]:cuda()
+            table_targets[step] = table_targets[step]:cuda()
             local output = mlp:forward(table_inputs[step])
-            print(output)
             mlp:zeroGradParameters()
-            print(#output)
-            print(#table_targets[step])
             err = criterion:forward(output, table_targets[step])
             grad_ouputs[step] = criterion:backward(output, table_targets[step])
-            assert(false)
             mlp:backward(table_inputs[step], grad_ouputs[step])
-            assert(false)
             mlp:updateParameters(learning_rate)
             sum_err = sum_err + err
         end
-        print(sum_err)
+        ---compute precision and print result
+        precision = testing:test(mlp, table_inputs, table_targets, number_input)
+        print(string.format("Iteration %d ; Error = %f, Precision = %f ", iteration, sum_err, precision))
+        ---Training is finished:
+        if sum_err < 1 then
+            break
+        end
     end
+    print('Time training:' .. timer:time().real .. ' seconds')
 end

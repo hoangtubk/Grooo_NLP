@@ -65,12 +65,13 @@ end
 
 --- Training
 local learning_rate = 0.01
+local number_input = 15
 local criterion = nn.SequencerCriterion(nn.MaskZeroCriterion(nn.ClassNLLCriterion(),1))
 --local criterion = (nn.MaskZeroCriterion(nn.ClassNLLCriterion(),1))
-training:train(table_inputs, table_targets, criterion, learning_rate)
+training:train(table_inputs, table_targets, criterion, learning_rate, number_input)
 
 ---Testing
-testing:test(mlp, table_inputs, table_targets)
+--testing:test(mlp, table_inputs, table_targets)
 
 --local test_in = torch.DoubleTensor({{10, 3 , 4, 5, 0 }, {10, 4, 5, 6, 0}})
 --print(test_in)
