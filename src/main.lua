@@ -66,4 +66,4 @@ local criterion = nn.SequencerCriterion(nn.MaskZeroCriterion(nn.ClassNLLCriterio
 training:train(table_inputs, table_targets, criterion, learning_rate, number_input)
 
 ---Testing
---testing:test(mlp, table_inputs, table_targets)
+--testing:test(mlp, table_inputs, table_targets, number_input)

@@ -51,7 +51,7 @@ function Training:train(table_inputs, table_targets, criterion, learning_rate, n
         precision = testing:test(mlp, table_inputs, table_targets, number_input)
         print(string.format("Iteration %d ; Error = %f, Precision = %f ", iteration, sum_err, precision))
         ---Training is finished:
-        if precision > 0.9 then
+        if sum_err < 0.01 then
             break
         end
     end

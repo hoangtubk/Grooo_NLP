@@ -22,24 +22,25 @@ function Testing:test(model, table_inputs, table_targets, number_input)
     local sum_class_predict = 0
     local sum_class_exactly = 0
     local precision = 0
-    for step = 0, number_input do
-        local step = 1
+    for step = 1, number_input do
         local output = model:forward(table_inputs[step])
         local new_output = output:clone()
+        local tmp_lable = 0
         ---Tinh so luong nhan can du doan
         for i = 1, self.batch_size do
             for j = 1, self.max_dim do
                 for k = 1, self.nout do
                     if new_output[i][j][k] ~= 0 then
-                        sum_class_predict = sum_class_predict + 1
+                        tmp_lable = tmp_lable + 1
                     end
                 end
             end
         end
+        sum_class_predict = sum_class_predict + (tmp_lable)/(self.nout)
         ---so nhan da du doan dung
         local value, index = torch.topk(output, 1, true)
         for i = 1, self.batch_size do
-            for j = 1, 97 do
+            for j = 1, self.max_dim do
                 if table_targets[step][i][j] == index[i][j][1] and table_targets[step][i][j] ~= 0 then
                     sum_class_exactly = sum_class_exactly + 1
                 end
@@ -47,6 +48,8 @@ function Testing:test(model, table_inputs, table_targets, number_input)
         end
     end
     ---tinh do chinh xac
+    print('True   All')
+    print(sum_class_exactly, sum_class_predict)
     precision = sum_class_exactly/sum_class_predict
 
     return precision
