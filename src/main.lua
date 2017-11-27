@@ -58,12 +58,45 @@ for i = 1, #data_inp, batch_size do
     table.insert(table_inputs, input)
     table.insert(table_targets, target)
 end
+print(#table_targets)
 
 --- Training
-local learning_rate = 0.02
-local number_input = 100
-local criterion = nn.SequencerCriterion(nn.MaskZeroCriterion(nn.ClassNLLCriterion(),1))
-training:train(table_inputs, table_targets, criterion, learning_rate, number_input)
+local learning_rate = 0.01
+local input_from = 1
+local input_to = 4000
+local test_from = 4001
+local test_to = 4761
+---set weights for criterion
+local weight = torch.Tensor(nout):zero()
+for step = input_from, input_to do
+    for i = 1, batch_size do
+        for j = 1, max_dim do
+            for iclass = 1, nout do
+                if table_targets[step][i][j] == iclass then
+                    weight[iclass] = weight[iclass] + 1
+                end
+            end
+        end
+    end
+end
+local sum_class = 0
+for i = 1, nout do
+    sum_class = sum_class + weight[i]
+end
+--print(weight)
+for i = 1, nout do
+    if weight[i] ~= 0 then
+        weight[i] = sum_class/weight[i]
+    end
+end
+--print(weight)
+--assert(false)
+---Begin Training
+local criterion = nn.SequencerCriterion(nn.MaskZeroCriterion(nn.ClassNLLCriterion(weight),1))
+training:train(mlp, table_inputs, table_targets, criterion, learning_rate, input_from, input_to, test_from, test_to)
 
 ---Testing
---testing:test(mlp, table_inputs, table_targets, number_input)
+print('Testing')
+local mlp_trained = torch.load('seqbnn.t7')
+local precition = testing:test(mlp_trained, table_inputs, table_targets, test_from, test_to)
+print(precition)

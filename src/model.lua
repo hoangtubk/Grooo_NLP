@@ -17,7 +17,6 @@ function Model:_init()
 end
 
 function Model:build_brnn()
-
     local lt = nn.LookupTableMaskZero(self.dict_size, self.hidden_size)
     local brnn = nn.SeqBRNN(self.hidden_size, self.hidden_size, true) ---use true: batchsize x seqLen x inputsize
     brnn.forwardModule.maskzero = true

@@ -1,0 +1,11 @@
+seqbnn_1.t7
+Kết quả train với inp_train= 20k, inp_test = 5k
+lr = 0.5
+lr = lr - 0.01*lr
+lr = 0,18301617063661
+Iteration 100 ; Error = 311,791495, Precision = 0,001816
+Time training:16641,129415989 seconds
+===============================================================
+seqbrnn_.t7
+kết quả train với inp_tr ain= 20k, inp_test = 5k
+lr = lr - 0.9*lr
