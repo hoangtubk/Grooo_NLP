@@ -36,7 +36,7 @@ function Training:train(model, table_inputs, table_targets, criterion, learning_
     local timer = torch.Timer()
     while iteration < 200 do
         iteration = iteration +1
-        learning_rate = learning_rate - 0,002495
+        learning_rate = learning_rate - 0.000495
         local  err, sum_err, precision = 0, 0, 0
         local grad_ouputs = {}
         for step = input_from, input_to do

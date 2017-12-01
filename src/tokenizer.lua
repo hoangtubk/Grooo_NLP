@@ -2,6 +2,7 @@
 --- Created by tuhoangbk.
 --- DateTime: 12/11/2017 12:30
 ---
+local utf8 = require 'lua-utf8'
 utils = require('pl.utils')
 class = require('pl.class')
 
@@ -18,8 +19,8 @@ function Tokenizer:split_word(inputstr, sep)
         sep = "%s"
     end
     local t={} ; i=1
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
-        str = str:lower():gsub("%p", ""):gsub("”", ""):gsub("“", "")
+    for str in utf8.gmatch(inputstr, "([^"..sep.."]+)") do
+        str = utf8:lower(str):gsub("%p", ""):gsub("”", ""):gsub("“", "")
         if tonumber(str) ~= nil then
             str = '<number>'
         end
@@ -35,7 +36,7 @@ function Tokenizer:split_word_only(inputstr, sep)
         sep = "%s"
     end
     local t={} ; i=1
-    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    for str in utf8.gmatch(inputstr, "([^"..sep.."]+)") do
         t[i] = str
         i = i + 1
     end
