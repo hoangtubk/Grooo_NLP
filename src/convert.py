@@ -86,24 +86,31 @@ class Convert():
 if __name__ == '__main__':
 	test = Convert()
 	test.create_dict()
-	string_fn = '../data/data.raw.txt' #data.raw
+	string_fn = '../data/output_beck_clean.txt' #data.raw
 	(data, result1, result2) = test.convert_string_to_id(string_fn)
 	# id_fn = './id.txt'
 	# list_string = test.convert_id_to_string(id_fn)
 
 	#save file input & target
-	inp = open('../output/input.txt', 'w')
-	tar = open('../output/target.txt', 'w')
-	# max_len = 0
+	inp = open('../output/input_beck_clean.txt', 'w')
+	tar = open('../output/target_beck_clean.txt', 'w')
+	max_len = 0
+	index_max = 0
 	for i in range(len(data)):
-		# x = (str)(result1[i]).replace('[', '').replace(']', '').replace(', ', ' ')
-		# if len(x.split(' ')) > max_len:
-		# 	max_len = len(x.split(' '))
+		#get max_dim
+		x = (str)(result1[i]).replace('[', '').replace(']', '').replace(', ', ' ')
+		if len(x.split(' ')) > max_len:
+			max_len = len(x.split(' '))
+			index_max = i
+		#
 		inp.write((str)(result1[i]).replace('[', '').replace(']', '').replace(', ', ' ') + '\n')
 		tar.write((str)(result2[i]).replace('[', '').replace(']', '').replace(', ', ' ') + '\n')
 		print (data[i], '\n' ,result1[i], '\n', result2[i])
 		print ("="*35)
 	# print('max')
-	# print(max_len)
+	print('max_dim')
+	print (max_len)
+	print('max_dim_index')
+	print (index_max)
 	inp.close()
 	tar.close()

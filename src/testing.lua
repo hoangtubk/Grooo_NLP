@@ -9,10 +9,10 @@ Testing = class()
 
 function Testing:_init()
     self.dict_size = 28 ---26 chữ cái, dấu cách và dấu '<' (>-unknown)
-    self.hidden_size = 100
+    self.hidden_size = 200
     self.batch_size = 10 -- số lượng câu trong mỗi input
     self.nout = 68 ---68 nhãn
-    self.max_dim = 97 ---seq_len
+    self.max_dim = 120 ---seq_len
 end
 
 ---@param model @Neuron Network

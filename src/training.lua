@@ -11,6 +11,9 @@ class = require('pl.class')
 include('testing.lua')
 
 local testing = Testing()
+---model save after each n loop
+local n_save = 50
+local loop_train = 200
 
 Training = class()
 function Training:_init()
@@ -31,12 +34,17 @@ function Training:train(model, table_inputs, table_targets, criterion, learning_
         table_inputs[i] = table_inputs[i]:cuda()
         table_targets[i] = table_targets[i]:cuda()
     end
+    --- setup learning_rate
+    local lr_reduction = (learning_rate - 0.001)/loop_train
     ---begin training
     local iteration = 0
     local timer = torch.Timer()
-    while iteration < 200 do
+    while iteration < loop_train do
         iteration = iteration +1
-        learning_rate = learning_rate - 0.000495
+        if iteration % n_save == 0 then
+            torch.save('seqbnn' .. iteration ..'.t7', model)
+        end
+        learning_rate = learning_rate - lr_reduction
         local  err, sum_err, precision = 0, 0, 0
         local grad_ouputs = {}
         for step = input_from, input_to do

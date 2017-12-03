@@ -11,7 +11,7 @@ Model = class()
 
 function Model:_init()
     self.dict_size = 28 ---26 chữ cái, dấu cách và dấu '<' (>-unknown)
-    self.hidden_size = 100
+    self.hidden_size = 200
     self.batch_size = 10 -- số lượng câu trong mỗi input
     self.nout = 68 ---68 nhãn
 end
