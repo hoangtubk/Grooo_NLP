@@ -66,6 +66,5 @@ function Training:train(model, table_inputs, table_targets, criterion, learning_
         --    break
         --end
     end
-    torch.save('seqbnn.t7', model)
     print('Time training:' .. timer:time().real .. ' seconds')
 end

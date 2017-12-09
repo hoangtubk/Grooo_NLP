@@ -86,14 +86,15 @@ class Convert():
 if __name__ == '__main__':
 	test = Convert()
 	test.create_dict()
-	string_fn = '../data/output_beck_clean.txt' #data.raw
+	file_name = 'beck_clean_all.txt'
+	string_fn = '../data/' + file_name #data.raw
 	(data, result1, result2) = test.convert_string_to_id(string_fn)
 	# id_fn = './id.txt'
 	# list_string = test.convert_id_to_string(id_fn)
 
 	#save file input & target
-	inp = open('../output/input_beck_clean.txt', 'w')
-	tar = open('../output/target_beck_clean.txt', 'w')
+	inp = open('../output/input_' + file_name, 'w')
+	tar = open('../output/target_' + file_name, 'w')
 	max_len = 0
 	index_max = 0
 	for i in range(len(data)):

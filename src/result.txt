@@ -9,3 +9,55 @@ Time training:16641,129415989 seconds
 seqbrnn_.t7
 kết quả train với inp_tr ain= 20k, inp_test = 5k
 lr = lr - 0.9*lr
+===============================================================
+seqbnn200_databeckshop.t7
+input: output_beck_clean.txt
+True   All
+8925	8941
+0,001
+Iteration 200 ; Error = 40,469570, Precision = 0,998210
+Time training:7173,0542650223 seconds
+===============================================================
+seqbnn200_location.t7
+input: output_beck_clean.txt, location.txt
+True   All
+1254	1259
+0,001
+Iteration 200 ; Error = 10,343204, Precision = 0,996029
+Time training:2193,2244429588 seconds
+===============================================================
+seqbnn50_346.t7
+input: output_beck_clean.txt, location.txt, 346.txt
+True   All	
+9442	9647	
+0,00775	
+Iteration 50 ; Error = 103,513722, Precision = 0,978750
+===============================================================
+seqbnn200_beckclean2.t7
+input: output_beck_clean.txt, location.txt, 346.txt, beck_clean_2.txt
+True   All
+17813	17865
+0,001
+Iteration 200 ; Error = 59,167137, Precision = 0,997089
+===============================================================
+seqbnn200_raw_beckshop.t7
+input: data_raw.txt, output_beck_clean.txt, location.txt, 346.txt, beck_clean_2.txt
+True   All
+37014	37742
+0,001
+Iteration 200 ; Error = 432,488199, Precision = 0,980711
+Time training:30518,641191959 seconds
+===============================================================
+seqbnn100_raw_beckshop_1.5.t7
+input: data_raw.txt, output_beck_clean.txt, location.txt, 346.txt, beck_clean_2.txt
+True   All
+172757	172983
+0,0055
+Iteration 100 ; Error = 326,814134, Precision = 0,998694
+===============================================================
+seqbnn100_raw_beckshop_2.0.t7
+input: data_raw.txt, output_beck_clean.txt, location.txt, 346.txt, beck_clean_2.txt
+True   All
+37466	37742
+0,00325
+Iteration 150 ; Error = 247,952226, Precision = 0,992687
