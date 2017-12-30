@@ -11,13 +11,14 @@ class = require('pl.class')
 include('testing.lua')
 
 local testing = Testing()
----model save after each n loop
-local n_save = 50
-local loop_train = 200
-
+---@class Training
 Training = class()
-function Training:_init()
 
+---init Training
+function Training:_init()
+    ---model save after each n loop
+    self.train_size = 57057
+    self.batch_size = 256
 end
 
 ---@param table_inputs table
@@ -26,45 +27,28 @@ end
 ---@param learning_rate number
 ---@param input_from number
 ---@param input_to number
-function Training:train(model, table_inputs, table_targets, criterion, learning_rate, input_from, input_to, test_from, test_to)
-    ---use GPU with cuda
-    criterion = criterion:cuda()
-    model = model:cuda()
-    for i = 1, #table_inputs do
-        table_inputs[i] = table_inputs[i]:cuda()
-        table_targets[i] = table_targets[i]:cuda()
-    end
-    --- setup learning_rate
-    local lr_reduction = (learning_rate - 0.001)/loop_train
+function Training:train(model, next_batch_input, next_batch_target, criterion, learning_rate, is_use_cuda)
     ---begin training
-    local iteration = 0
     local timer = torch.Timer()
-    while iteration < loop_train do
-        iteration = iteration +1
-        if iteration % n_save == 0 then
-            torch.save('seqbnn' .. iteration ..'.t7', model)
-        end
-        learning_rate = learning_rate - lr_reduction
-        local  err, sum_err, precision = 0, 0, 0
-        local grad_ouputs = {}
-        for step = input_from, input_to do
+    local  err, sum_err, precision = 0, 0, 0
+    local grad_ouputs = {}
+    for step = 1, math.floor(self.train_size/self.batch_size) do
+        local input = next_batch_input()
+        local target = next_batch_target()
         ---use GPU with cuda
-            local output = model:forward(table_inputs[step])
-            model:zeroGradParameters()
-            err = criterion:forward(output, table_targets[step])
-            grad_ouputs[step] = criterion:backward(output, table_targets[step])
-            model:backward(table_inputs[step], grad_ouputs[step])
-            model:updateParameters(learning_rate)
-            sum_err = sum_err + err
+        if is_use_cuda then
+            input = input:cuda()
+            target = target:cuda()
         end
-        ---compute precision and print result
-        precision = testing:test(model, table_inputs, table_targets, input_from, input_to)
-        print(learning_rate)
-        print(string.format("Iteration %d ; Error = %f, Precision = %f ", iteration, sum_err, precision))
-        ---Training is finished:
-        --if sum_err < 1 then
-        --    break
-        --end
+        local output = model:forward(input)
+        model:zeroGradParameters()
+        err = criterion:forward(output, target)
+        grad_ouputs[step] = criterion:backward(output, target)
+        model:backward(input, grad_ouputs[step])
+        model:updateParameters(learning_rate)
+        sum_err = sum_err + err
     end
-    print('Time training:' .. timer:time().real .. ' seconds')
+    local time_train = timer:time().real
+
+    return sum_err, time_train
 end

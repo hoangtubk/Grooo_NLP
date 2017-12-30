@@ -10,46 +10,50 @@ Testing = class()
 function Testing:_init()
     self.dict_size = 28 ---26 chữ cái, dấu cách và dấu '<' (>-unknown)
     self.hidden_size = 200
-    self.batch_size = 10 -- số lượng câu trong mỗi input
+    self.batch_size = 256 -- số lượng câu trong mỗi input
     self.nout = 68 ---68 nhãn
     self.max_dim = 120 ---seq_len
+    self.train_size = 57057
 end
 
 ---@param model @Neuron Network
 ---@param table_inputs table @input
 ---@param table_targets table @target
 ---@param number_input number @number input sequence sentent
-function Testing:test(model, table_inputs, table_targets, test_from, test_to)
+function Testing:test(model, next_batch_input_test, next_batch_target_test, is_use_cuda)
     local sum_class_predict = 0
     local sum_class_exactly = 0
     local precision = 0
-    local tb_index_pre, size = self:get_table_index_pred(table_targets, test_from, test_to)
-    ---Tinh so luong nhan can du doan
-    for i = 1, size do
-        sum_class_predict = sum_class_predict + tb_index_pre[i]
-    end
-    for step = test_from, test_to do
-        local output = model:forward(table_inputs[step])
-        --print(output)
-        --assert(false)
+
+    for i = 1, math.floor(self.train_size/self.batch_size) do
+        local test_input = next_batch_input_test()
+        local test_target = next_batch_target_test()
+        ---use GPU with cuda
+        if is_use_cuda then
+            test_input = test_input:cuda()
+            test_target = test_target:cuda()
+        end
+        local tb_index_pre, size = self:get_table_index_pred(test_target)
+        ---so nhan can du doan
+        sum_class_predict = sum_class_predict + size
+        local output = model:forward(test_input)
         ---so nhan da du doan dung
         local value, index = torch.topk(output, 1, true)
-        --print(index)
-        --assert(false)
         for i = 1, self.batch_size do
-            for j = 1, self.max_dim do
-                if table_targets[step][i][j] == index[i][j][1]
-                and table_targets[step][i][j] ~= 0
-                and table_targets[step][i][j] ~= self.nout then
+            for j = 1, self.nout do
+                if tb_index_pre[i][j] == index[i][j][1]
+                and test_target[i] ~= 0
+                and test_target[i] ~= self.nout then
                     sum_class_exactly = sum_class_exactly + 1
                 end
             end
         end
     end
     ---tinh do chinh xac
-    print('True   All')
-    print(sum_class_exactly, sum_class_predict)
+    --print('True   All')
+    --print(sum_class_exactly, sum_class_predict)
     precision = sum_class_exactly/sum_class_predict
+    print(sum_class_predict)
 
     return precision
 end
@@ -58,23 +62,23 @@ end
 ---@param table_targets table
 ---@param input_from number
 ---@param input_to number
-function Testing:get_table_index_pred(table_targets, input_from, input_to)
-    local size = input_to - input_from + 1
-    local index_tensor = torch.Tensor(input_to - input_from + 1):zero()
-    for step = input_from, input_to do
-        for i = 1, self.batch_size do
-            for j = 1,self.max_dim do
-                if table_targets[step][i][j] ~= 0
-                and table_targets[step][i][j] ~= 68 then
-                    index_tensor[step - input_from + 1] = index_tensor[step - input_from + 1] + 1
-                end
+function Testing:get_table_index_pred(test_target)
+    local size = 0
+    local table_index = test_target:clone():zero()
+    for i = 1,  self.batch_size do
+        for j = 1, self.max_dim do
+            if test_target[i][j] ~= 0
+            and test_target[i][j] ~= 68 then
+                size = size + 1
+                table_index[i][j] = test_target[i][j]
             end
         end
     end
-    return index_tensor, size
+
+    return table_index, size
 end
 
-function Testing:test_string(model, content)
+function Testing:test_string(model, content, is_use_cuda)
     local list_accent = 'àáảãạăắằẵặẳâầấậẫẩđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ'
     print(content)
     ---Convert to vector
@@ -95,6 +99,10 @@ function Testing:test_string(model, content)
 
         tensor_test[1][i] = dec_char
     end
+    ---use GPU with cuda
+    if is_use_cuda then
+        tensor_test = tensor_test:cuda()
+    end
     ---forward model & get index softmax
     local output = model:forward(tensor_test)
     local value, index = torch.topk(output, 1, true)
@@ -111,6 +119,6 @@ function Testing:test_string(model, content)
     end
     return new_string
 end
-
+--local mlp_load = torch.load('../ModelCheckpoint/seqbrnn2.0_uncuda.t7')
 --testing = Testing()
---testing:test('a', 'mp3 tim kiem tin')
+--testing:test()

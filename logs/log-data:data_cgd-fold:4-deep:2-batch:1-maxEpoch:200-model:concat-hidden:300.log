@@ -1,0 +1,37 @@
+[program started on Chủ nhật, 10 Tháng mười hai Năm 2017 18:58:43 +07] 
+[command line arguments] 
+modelType concat 
+eval false 
+lengLabel 150 
+nameDataTrain train-4.t7 
+data_dir ../data_cgd/ 
+lr 0,001 
+nNumLayerLstmIntermediate 2 
+serverPort 18081 
+lengDict 500 
+nameDataTest test-4.t7 
+idxFold 4 
+isUsedCuda true 
+minLR 1e-05 
+testing false 
+batch_size 1 
+nameLog log-data:data_cgd-fold:4-deep:2-batch:1-maxEpoch:200-model:concat-hidden:300.log 
+loadPersonSystem true 
+decayRate 0,95 
+saturateEpoch 0 
+logPrintNegative false 
+isSaveLog true 
+hasTimeLog false 
+rundir ../logs 
+dropoutRate 0,5 
+isUseTokenizer true 
+maxEpochSemantic 200 
+lengWordVector 300 
+maxEpochCombine 80 
+compressDataCombine true 
+momentum 0,95 
+training false 
+nameNN Seq2Seq 
+dataNameLogicform data.logicform.t7 
+model_dir ../model_prolog_cgd/ 
+[----------------------] 
